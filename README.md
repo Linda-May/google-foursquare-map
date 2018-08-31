@@ -10,7 +10,7 @@ This project was created with [Create React App](https://github.com/facebookincu
 ## Production Mode
 * To create a production build use `npm run build`
 * Navigate to the build directory and start the server with `npm run deploy`
-* This mode includes a [Service Worker] (https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).
+* This mode includes a [Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).
 
 ## Used technologies
 * React and Create React App
@@ -20,7 +20,7 @@ This project was created with [Create React App](https://github.com/facebookincu
 
 ## Resources
 * [Foursquare API](https://developer.foursquare.com/)
-* [React] (https://reactjs.org/docs/getting-started.html)
+* [React](https://reactjs.org/docs/getting-started.html)
 * [Create React App](https://github.com/facebookincubator/create-react-app)
 * [Google Maps JavaScript API Documentation](https://developers.google.com/maps/documentation/javascript/tutorial)
 * Many thanks to LevelUp Tutorials, see ["React for everyone" on the Youtube](https://www.youtube.com/channel/UCyU5wkjgQYGRB0hIHMwm2Sg)
