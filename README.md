@@ -6,6 +6,7 @@ This project was created with [Create React App](https://github.com/facebookincu
 * Install all project dependencies with `npm install`
 * Start the server with `npm start`
 * Check if you have installed `create-react-app`, if not, go here [How to install  Create-React-App](https://github.com/facebook/create-react-app)
+* Also check if you have installed `react-async-script-loader`, if not, go here [How to install  React-Async-Script-Loader](https://www.npmjs.com/package/react-async-script-loader)
 
 ## Production Mode
 * To create a production build use `npm run build`
