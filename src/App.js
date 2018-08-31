@@ -1,75 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
+import scriptLoader from 'react-async-script-loader';
 import Search from './Search';
+import { locations } from './locations';
 
 let createMap = {};
-
-// New array with favourite locations
-const locations = [
- {
-  name: 'Coffee Room',
-  location: {
-    lat: 59.9653723,
-    lng: 30.3127224,
-    address: 'Lva Tolstogo Str 1'
-  },
-  venueId: '500d888ae4b0647ba615b612'
- },
- {
-  name: 'Jean-Jacques',
-  location: {
-    lat: 59.9605738,
-    lng: 30.3026711,
-    address: 'Gatchinskaya Str, 2/54'
-  },
-  venueId: '4baf5daaf964a5208dfa3be3'
- },
- {
-  name: 'Mozarella Bar',
-  location: {
-    lat: 59.9552484,
-    lng: 30.2955789,
-    address: 'Bolshoy Prospekt, 13/4'
-  },
-  venueId: '4bb9fe4bcf2fc9b6cffba002'
- },
-  {
-  name: 'Yasli',
-  location: {
-    lat: 59.956109,
-    lng: 30.3071579,
-    address: 'Markina Str, 1'
-  },
-  venueId: '548215f7498e432bb993b784'
- },
-   {
-  name: 'Manneken Pis',
-  location: {
-    lat: 59.958953,
-    lng: 30.317816,
-    address: 'Kamennoostrovsky avenue, 12'
-  },
-  venueId: '557314c9498e82a42318049b'
- },
-    {
-  name: 'Koryushka',
-  location: {
-    lat: 59.9480567,
-    lng: 30.3116536,
-    address: 'Peter and Paul Fortress, 3'
-  },
-  venueId: '518117bf90e7ce79962d9496'
- },   
- {
-  name: 'More Coffee',
-  location: {
-    lat: 59.9545527,
-    lng: 30.3204663,
-    address: 'Aleksandrovskiy Park, 3G'
-  },
-  venueId: '4fd46098e4b0ba0232874a55'
- }
-]  
 
 class App extends Component {
   // Constructor and initial states
@@ -77,26 +12,21 @@ class App extends Component {
     super(props);
     this.state = {
       map: {},
-      venues: [],
-      infowindow: {}
+      infowindow: {},
+      venues: []
     }
     // Binding venueData function
     this.venueData = this.venueData.bind(this);
-  }
+  }  
 
-  // Loading the Google Map with the API Key
-  loadMap = () => {
-    googleMap("https://maps.googleapis.com/maps/api/js?key=AIzaSyAVhr2i8ORiLZ8NSaIq6OtYnnE5eghEtlo&callback=initMap")
-    window.initMap = this.initMap
-  }
+  // Initialization of the map when the script loads
+  componentWillReceiveProps({isScriptLoadSucceed}) {
+    if (isScriptLoadSucceed) {
 
-  // Mounting the loadMap
-  componentDidMount() {
-    this.loadMap()
-  }
+  // Calling the Foursquare function    
+    this.venueData();
 
-  // Creating a map
-  initMap = () => {
+    // Creating a new Map
     createMap = new window.google.maps.Map(document.getElementById('map'), {
         center: { lat: 59.9566134, lng: 30.318653 },
         zoom: 12,
@@ -104,22 +34,34 @@ class App extends Component {
         streetViewControl: true,
         fullscreenControl: false
     });
-    
+
     // Map variables
     const bounds = new window.google.maps.LatLngBounds(); 
     let createMarkers = [];
+    let myLocations = [];
     const moreInfo = new window.google.maps.InfoWindow({maxWidth: 320});
-
     // Adding keypress click  
     const clicking = 'click keypress'.split(' ');
 
+    // If the Foursquare data aren't received, we take the data from locations file
+    setTimeout(() => {
+    if (this.state.venues.length === 12) {
+      myLocations = this.state.venues;
+      console.log(myLocations);
+    } else {
+      myLocations = locations;
+      console.log(myLocations);
+    }
+
     // Variables with data about locations
-    for (let i = 0; i < locations.length; i++) {
-      let position = {lat: locations[i].location.lat, lng: locations[i].location.lng};
-      let name = locations[i].name;
-      let lat = locations[i].location.lat;
-      let lng = locations[i].location.lng;
-      let address = locations[i].location.address;
+    for (let i = 0; i < myLocations.length; i++) {
+      let position = {lat: myLocations[i].location.lat, lng: myLocations[i].location.lng};
+      let name = myLocations[i].name;
+      let lat = myLocations[i].location.lat;
+      let lng = myLocations[i].location.lng;
+      let address = myLocations[i].location.address;
+      let rating = myLocations[i].rating;
+      let vlink = myLocations[i].canonicalUrl;
 
       // Creating markers and adding animation
       let marker = new window.google.maps.Marker({
@@ -131,7 +73,9 @@ class App extends Component {
         lat: lat,
         lng: lng,
         address: address,  
-        title: name
+        title: name,
+        rating: rating,
+        vlink: vlink
       });
       createMarkers.push(marker);
 
@@ -140,11 +84,13 @@ class App extends Component {
         marker.addListener(clicking[i], function() {
           addInfoWindow(this, moreInfo);
           this.setAnimation(window.google.maps.Animation.BOUNCE);
+          setTimeout(function () {
+             marker.setAnimation(null);
+          }, 800);
         });
       }
       bounds.extend(createMarkers[i].position);
-    }
-    
+   }  
     // Fitting map to bounds   
     createMap.fitBounds(bounds);
 
@@ -153,11 +99,15 @@ class App extends Component {
       map: createMap,
       venues: createMarkers,
       infowindow: moreInfo
-    });
+    }); 
+  }, 800);
+   } else {
+      alert('There is some Google Maps error');
+    }
   }
 
   // Getting Foursquare information about venues
-  venueData() {
+  venueData () {
     let places = [];
     const clientId = "U0GGE1TLAFLYFPMXYBEZ4YLJA3LE5OYFPQPQDPXF2TY1FG5K";
     const clientSecret = "SYBO1ANVUPEIOASYYCTVR302QCPXO05YHBRUBCYBSWQIZ1YP"; 
@@ -166,55 +116,58 @@ class App extends Component {
 
     // Creating request with fetch
     locations.map((location) =>
-      fetch(startUrl + `${location.venueId}?client_id=` + clientId + `&client_secret=` + clientSecret + `&v=` + version)
+      fetch(startUrl + `${location.venueId}?&client_id=` + clientId + `&client_secret=` + clientSecret + `&v=` + version)
         .then(response => response.json())
         .then(data => {
           if (data.meta.code === 200) {
-            places.push(data.response.venue);
+             places.push(data.response.venue); 
           }
         }).catch(error => {
           console.log(error);
+          alert('Sorry, there is an error with Foursquare API');
         })
-    );
+   );
 
     // Updating venues state
     this.setState({
       venues: places
     });
+    console.log(this.state.venues);
   }
-  
+
+  // Alert if there is an authorization failure
+  gm_authFailure = () => { 
+        alert("Sorry, there is problem with an authorization at Google Maps"); //
+    }
+
   // Rendering the App
   render() {
     return (
       <main>
         <Search role='main' map={ this.state.map } venues={ this.state.venues } infowindow={ this.state.infowindow }/>
-        <div id="map" role='application' tabIndex='-1'></div>
+        <div id="map" role='application'></div>
       </main>
     );
   }
 }
 
-// Creating google Map script
-const googleMap = (url) => {
-  const ref = window.document.getElementsByTagName("script")[0]
-  const script = window.document.createElement("script")
-  script.src = url
-  script.async = true
-  script.defer = true
-  ref.parentNode.insertBefore(script, ref)
-}
-
 // Adding info window
 const addInfoWindow = (marker, infowindow) => {
+  infowindow = new window.google.maps.InfoWindow();
   infowindow.setContent(
     '<div class="window-wrap">'+
     '<h2 class="name">'+marker.name+'</h2><br>'+
     '<p class="address">Latitude: '+marker.lat+'</p><br>'+
     '<p class"address">Longitude: '+marker.lng+'</p><br>'+
     '<p class="address">Address: '+marker.address+'</p><br>'+
+      '<p class="info-rating">Rating: '+marker.rating+'</p><br>'+
+      '<a class="link" href='+marker.vlink+' target="_blank"><span>For more information<span></a><br>'+
     '</div>'
   );
   infowindow.open(createMap, marker);
 }
 
-export default App;
+// Google Maps script 
+export default scriptLoader(
+ [`https://maps.googleapis.com/maps/api/js?key=AIzaSyAVhr2i8ORiLZ8NSaIq6OtYnnE5eghEtlo`]
+)(App);

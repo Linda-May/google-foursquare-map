@@ -29,7 +29,7 @@ class Search extends Component {
         infowindow: this.props.infowindow,
         currentVenues: this.props.venues
       });
-    }, 600);
+    }, 800);
   }
 
   // Opening the search menu
@@ -93,9 +93,22 @@ class Search extends Component {
             '<p class="position">Latitude: '+event.lat+'</p><br>'+
             '<p class="position">Longitude: '+event.lng+'</p><br>'+
             '<p class="address">Address: '+event.address+'</p><br>'+
+            '<p class="rating">Rating: '+event.rating+'</p><br>'+
+            '<a class="link" href='+event.vlink+' target="_blank"><span>More info<span></a><br>'+
             '</div>'
-          );
+        );    
         this.state.infowindow.open(this.props.map, event);
+
+
+        if (event.getAnimation() !== null) {
+          event.setAnimation(null);
+        } else {
+          event.setAnimation(window.google.maps.Animation.BOUNCE);
+          setTimeout(() => {
+            event.setAnimation(null);
+          }, 1000);
+        }
+
       }
     });
   }
@@ -105,7 +118,7 @@ class Search extends Component {
     const { search, venues } = this.state;
     const { openSearch, closeSearch, searchResults, openInfoWindow } = this;
     return (
-      <div className='wrap'>
+      <nav className='wrap'>
         <div onClick={ openSearch } onKeyPress={ openSearch } title='Open search' tabIndex="0" className='button open_button' role='button'>
         Search
         </div>
@@ -120,14 +133,14 @@ class Search extends Component {
           <ul className='list'>
             {Object.keys(venues).map(i => (
               <li className='item' key={ i }>
-                <p onClick={ () => openInfoWindow(venues[i]) } onKeyPress={ () => openInfoWindow(venues[i]) } tabIndex="0" className='item-action' role='button'>
+                <p onClick={ () => openInfoWindow(venues[i]) } onKeyPress={ () => openInfoWindow(venues[i]) } onBlur={this.handleBlur} tabIndex="0" className='item-action' role='button'>
                 { venues[i].name }
                 </p>
               </li>
             ))}
           </ul>
         </div>
-      </div>
+      </nav>
     );
   }
 }
