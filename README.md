@@ -5,7 +5,7 @@ This project was created with [Create React App](https://github.com/facebookincu
 * Download or Clone the Repository.
 * Install all project dependencies with `npm install`
 * Start the server with `npm start`
-* Check if you have installed `create-react-app`, if not, go here [How to install  Create-React-App] (https://github.com/facebook/create-react-app)
+* Check if you have installed `create-react-app`, if not, go here [How to install  Create-React-App](https://github.com/facebook/create-react-app)
 
 ## Production Mode
 * To create a production build use `npm run build`
