@@ -60,8 +60,6 @@ class App extends Component {
       let lat = myLocations[i].location.lat;
       let lng = myLocations[i].location.lng;
       let address = myLocations[i].location.address;
-      let rating = myLocations[i].rating;
-      let vlink = myLocations[i].canonicalUrl;
 
       // Creating markers and adding animation
       let marker = new window.google.maps.Marker({
@@ -73,9 +71,7 @@ class App extends Component {
         lat: lat,
         lng: lng,
         address: address,  
-        title: name,
-        rating: rating,
-        vlink: vlink
+        title: name
       });
       createMarkers.push(marker);
 
@@ -160,8 +156,6 @@ const addInfoWindow = (marker, infowindow) => {
     '<p class="address">Latitude: '+marker.lat+'</p><br>'+
     '<p class"address">Longitude: '+marker.lng+'</p><br>'+
     '<p class="address">Address: '+marker.address+'</p><br>'+
-      '<p class="info-rating">Rating: '+marker.rating+'</p><br>'+
-      '<a class="link" href='+marker.vlink+' target="_blank"><span>For more information<span></a><br>'+
     '</div>'
   );
   infowindow.open(createMap, marker);

@@ -93,8 +93,6 @@ class Search extends Component {
             '<p class="position">Latitude: '+event.lat+'</p><br>'+
             '<p class="position">Longitude: '+event.lng+'</p><br>'+
             '<p class="address">Address: '+event.address+'</p><br>'+
-            '<p class="rating">Rating: '+event.rating+'</p><br>'+
-            '<a class="link" href='+event.vlink+' target="_blank"><span>More info<span></a><br>'+
             '</div>'
         );    
         this.state.infowindow.open(this.props.map, event);
